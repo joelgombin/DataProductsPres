@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Processing the French Home Office elections return files</title>
+  <meta charset="utf-8">
+  <meta name="description" content="Processing the French Home Office elections return files">
+  <meta name="author" content="Joël Gombin">
+  <meta name="generator" content="slidify" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <link rel="stylesheet" href="libraries/frameworks/io2012/css/default.css" media="all" >
+  <link rel="stylesheet" href="libraries/frameworks/io2012/phone.css" 
+    media="only screen and (max-device-width: 480px)" >
+  <link rel="stylesheet" href="libraries/frameworks/io2012/css/slidify.css" >
+  <link rel="stylesheet" href="libraries/highlighters/highlight.js/css/tomorrow.css" />
+  <base target="_blank"> <!-- This amazingness opens all links in a new tab. -->
+  <script data-main="libraries/frameworks/io2012/js/slides" 
+    src="libraries/frameworks/io2012/js/require-1.0.8.min.js">
+  </script>
+  
+    <link rel="stylesheet" href = "assets/css/ribbons.css">
+
+</head>
+<body style="opacity: 0">
+  <slides class="layout-widescreen">
+    
+    <!-- LOGO SLIDE -->
+    <!-- END LOGO SLIDE -->
+    
+
+    <!-- TITLE SLIDE -->
+    <!-- Should I move this to a Local Layout File? -->
+    <slide class="title-slide segue nobackground">
+      <hgroup class="auto-fadein">
+        <h1>Processing the French Home Office elections return files</h1>
+        <h2>Coursera Developing Data Products Assignment</h2>
+        <p>Joël Gombin<br/></p>
+      </hgroup>
+          </slide>
+
+    <!-- SLIDES -->
+      <slide class="" id="slide-1" style="background:;">
+  <hgroup>
+    <h2>The problem</h2>
+  </hgroup>
+  <article>
+    <p>The French Home Office releases elections returns, broken down by local subdivisions. Unfortunately, these files are not directly usable for data analysis, because they are not in tabular format - in particular when the electoral offer is the same everywhere. Transforming it into tabular data is quite difficult in a spreadsheet editor - that would necessit to write a macro. </p>
+
+<p>The files look somewhat like this:</p>
+
+<!-- html table generated in R 3.1.0 by xtable 1.7-3 package -->
+
+<!-- Sun Jun 22 01:23:34 2014 -->
+
+<TABLE border=1>
+<TR> <TH>  </TH> <TH> Nom </TH> <TH> Prénom </TH> <TH> Nuance </TH> <TH> Voix </TH> <TH> Nom.1 </TH> <TH> Prénom.1 </TH> <TH> Nuance.1 </TH> <TH> Voix.1 </TH>  </TR>
+  <TR> <TD align="right"> 1 </TD> <TD> THOMAS </TD> <TD> GILBERT </TD> <TD> DVG </TD> <TD align="right"> 2548 </TD> <TD> BILLOUDET </TD> <TD> GUY </TD> <TD> UMP </TD> <TD align="right"> 2452 </TD> </TR>
+  <TR> <TD align="right"> 2 </TD> <TD> LARMANJAT </TD> <TD> Guy </TD> <TD> SOC </TD> <TD align="right"> 2921 </TD> <TD> PETIT </TD> <TD> REGIS </TD> <TD> UMP </TD> <TD align="right"> 1781 </TD> </TR>
+  <TR> <TD align="right"> 3 </TD> <TD> TRAVERS </TD> <TD> J.CLAUDE </TD> <TD> UMP </TD> <TD align="right"> 2239 </TD> <TD> DUPONT </TD> <TD> MARC </TD> <TD> SOC </TD> <TD align="right"> 1236 </TD> </TR>
+   </TABLE>
+
+<p>So I decided to write a dedicated R package, available on my <a href="https://github.com/joelgombin/LireMinInterieur">Github Page</a>. It can be installed by running <code>devtools::github_install(&quot;joelgombin/LireMinInterieur&quot;)</code>.</p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+      <slide class="" id="slide-2" style="background:;">
+  <hgroup>
+    <h2>The solution</h2>
+  </hgroup>
+  <article>
+    <p>At the heart of the solution is a double loop. Loops are supposed to be slow in R, and a first it was. But by using matrixes rather than dataframes, and by creating an object of the proper size at first, it actually gets quite efficient (because R doesn&#39;t have to make copies of the target object).</p>
+
+<pre><code class="r">res2 &lt;- matrix(0, nrow = dim(res1)[1], ncol = length(nuances) + length(candidats), 
+    dimnames = list(c(), c(nuances, candidats)), byrow = TRUE)
+
+
+
+for (i in 1:length(nuances)) {
+    for (j in 1:dim(etiquettes)[1]) {
+        index &lt;- which(etiquettes[j, ] == nuances[i])
+        res2[j, nuances[i]] &lt;- sum(valeurs[j, index])
+        res2[j, candidats[i]] &lt;- sum(length(index))
+    }
+}
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+      <slide class="" id="slide-3" style="background:;">
+  <hgroup>
+    <h2>The shiny app</h2>
+  </hgroup>
+  <article>
+    <p>The ShinyApp lives at <a href="http://www.joelgombin.fr:3838/shiny/LireMinInterieurEng/">http://www.joelgombin.fr:3838/shiny/LireMinInterieurEng/</a> (it couldn&#39;t manage to have it running smoothly on ShinyApps.io, apparently for encoding issues - I reported the issue to ShinyApps.io).</p>
+
+<iframe src="http://www.joelgombin.fr:3838/shiny/LireMinInterieurEng" width=650 heigt=300></iframe>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+      <slide class="" id="slide-4" style="background:;">
+  <hgroup>
+    <h2>Example</h2>
+  </hgroup>
+  <article>
+    
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+    <slide class="backdrop"></slide>
+  </slides>
+
+  <!--[if IE]>
+    <script 
+      src="http://ajax.googleapis.com/ajax/libs/chrome-frame/1/CFInstall.min.js">  
+    </script>
+    <script>CFInstall.check({mode: 'overlay'});</script>
+  <![endif]-->
+</body>
+<!-- Grab CDN jQuery, fall back to local if offline -->
+<script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.7.min.js"></script>
+<script>window.jQuery || document.write('<script src="libraries/widgets/quiz/js/jquery-1.7.min.js"><\/script>')</script>
+<!-- Load Javascripts for Widgets -->
+<!-- LOAD HIGHLIGHTER JS FILES -->
+<script src="libraries/highlighters/highlight.js/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+<!-- DONE LOADING HIGHLIGHTER JS FILES -->
+</html>
