@@ -18,7 +18,7 @@ The French Home Office releases elections returns, broken down by local subdivis
 The files look somewhat like this:
 
 <!-- html table generated in R 3.1.0 by xtable 1.7-3 package -->
-<!-- Sun Jun 22 01:23:34 2014 -->
+<!-- Sun Jun 22 01:36:53 2014 -->
 <TABLE border=1>
 <TR> <TH>  </TH> <TH> Nom </TH> <TH> Prénom </TH> <TH> Nuance </TH> <TH> Voix </TH> <TH> Nom.1 </TH> <TH> Prénom.1 </TH> <TH> Nuance.1 </TH> <TH> Voix.1 </TH>  </TR>
   <TR> <TD align="right"> 1 </TD> <TD> THOMAS </TD> <TD> GILBERT </TD> <TD> DVG </TD> <TD align="right"> 2548 </TD> <TD> BILLOUDET </TD> <TD> GUY </TD> <TD> UMP </TD> <TD align="right"> 2452 </TD> </TR>
@@ -65,6 +65,15 @@ The ShinyApp lives at [http://www.joelgombin.fr:3838/shiny/LireMinInterieurEng/]
 
 ## Example
 
+An example dataset can be downloaded [here](https://raw.githubusercontent.com/joelgombin/DataProductsPres/gh-pages/data/Canto%2004%20R%C3%A9sultats%20Can%20%20FE%20T1.csv).
 
-
+* Go to [the app](http://www.joelgombin.fr:3838/shiny/LireMinInterieurEng/).
+* Upload the file.
+* Field separators are semi-colons; decimal separators are commas.
+* Load the dataset.
+* Keep the `Code.du.département, Code.du.canton, Inscrits, Abstentions, Votants, Blancs.et.nuls, Exprimés` columns. You shouldn't need to rename them.
+* The first column with political labels is called `Nuance`. 
+* There are 8 columns between each political label column.
+* There is 1 column between the political labels and the vote count.
+* Press the `process file button`, switch to the `File after processing` tab, *et voilà* !
 
